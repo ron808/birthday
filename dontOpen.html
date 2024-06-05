@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Change this yep!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
     <style>
- body {
+        body {
             background: #000;
             margin: 0;
             font-size: 16px;
-            /* font-family: Verdana, sans-serif; */
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         #message {
-            margin-right:3px;
-            margin-left:3px;
+            margin-right: 3px;
+            margin-left: 3px;
             width: 100%;
             font-size: 2em;
             color: white;
@@ -31,7 +30,6 @@
             cursor: crosshair;
             display: block;
         }
-
     </style>
 </head>
 <body>
@@ -43,7 +41,7 @@
             document.addEventListener("touchstart", touchHandler, true);
             document.addEventListener("touchmove", touchHandler, true);
             document.addEventListener("touchend", touchHandler, true);
-            document.addEventListener("touchcancel", touchHandler, true);    
+            document.addEventListener("touchcancel", touchHandler, true);
         }
 
         function isTouchSupported() {
@@ -82,8 +80,14 @@
             mx, my;
 
         // Set canvas dimensions
-        canvas.width = cw;
-        canvas.height = ch;
+        function setCanvasDimensions() {
+            cw = window.innerWidth;
+            ch = window.innerHeight;
+            canvas.width = cw;
+            canvas.height = ch;
+        }
+
+        setCanvasDimensions();
 
         // Utility functions
         function random(min, max) {
@@ -263,27 +267,28 @@
             mousedown = false;
         });
 
-        canvas.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    mousedown = true;
-    var touch = e.touches[0];
-    mx = touch.pageX - canvas.offsetLeft;
-    my = touch.pageY - canvas.offsetTop;
-}, false);
+        // Touch event handlers
+        function touchHandler(event) {
+            var touches = event.changedTouches,
+                first = touches[0],
+                type = "";
 
-canvas.addEventListener('touchmove', function(e) {
-    e.preventDefault();
-    if (mousedown) {
-        var touch = e.touches[0];
-        mx = touch.pageX - canvas.offsetLeft;
-        my = touch.pageY - canvas.offsetTop;
-    }
-}, false);
+            switch(event.type) {
+                case "touchstart": type = "mousedown"; break;
+                case "touchmove":  type = "mousemove"; break;        
+                case "touchend":   type = "mouseup"; break;
+                default: return;
+            }
 
-canvas.addEventListener('touchend', function(e) {
-    e.preventDefault();
-    mousedown = false;
-}, false);
+            var simulatedEvent = document.createEvent("MouseEvent");
+            simulatedEvent.initMouseEvent(type, true, true, window, 1,
+                                          first.screenX, first.screenY,
+                                          first.clientX, first.clientY, false,
+                                          false, false, false, 0, null);
+
+            first.target.dispatchEvent(simulatedEvent);
+            event.preventDefault();
+        }
 
         window.onload = loop;
 
@@ -343,10 +348,7 @@ canvas.addEventListener('touchend', function(e) {
 
         // Handle window resize
         window.addEventListener('resize', function() {
-            cw = window.innerWidth;
-            ch = window.innerHeight;
-            canvas.width = cw;
-            canvas.height = ch;
+            setCanvasDimensions();
             centerMessage();
         });
     </script>

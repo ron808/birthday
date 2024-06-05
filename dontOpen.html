@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Change this yep!</title>
     <style>
  body {
@@ -262,6 +262,28 @@
             e.preventDefault();
             mousedown = false;
         });
+
+        canvas.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    mousedown = true;
+    var touch = e.touches[0];
+    mx = touch.pageX - canvas.offsetLeft;
+    my = touch.pageY - canvas.offsetTop;
+}, false);
+
+canvas.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    if (mousedown) {
+        var touch = e.touches[0];
+        mx = touch.pageX - canvas.offsetLeft;
+        my = touch.pageY - canvas.offsetTop;
+    }
+}, false);
+
+canvas.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    mousedown = false;
+}, false);
 
         window.onload = loop;
 
